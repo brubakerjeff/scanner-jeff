@@ -1,9 +1,12 @@
-﻿
-using System.Collections.Concurrent;
-var counter = 0;
+﻿using System.Collections.Concurrent;
+const int taskCount=5; // Specify the number of simultaneous threads to for  processing
 
+
+// Create a thread safe queue 
 ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
+ConcurrentQueue<string> quarantine = new ConcurrentQueue<string>();
 
+Console.WriteLine("Adding these files for processing");
 
 string[] files = Directory.GetFiles("toscan");
 foreach (string file in files)
@@ -14,34 +17,38 @@ foreach (string file in files)
 
 int outerSum = 0;
 // An action to consume the ConcurrentQueue.
-Action action = () =>
+Action my_action = () =>
 {
-    int localSum = 0;
-    string localValue;
+    string? localValue;
+    
     while (cq.TryDequeue(out localValue)) {
-      //  localSum += localValue;
-        Console.WriteLine(localValue);
+        if(localValue.Contains("file")) {
+            quarantine.Enqueue(localValue);
+            Console.WriteLine("potential positive " + localValue);
+        }
     }
-    Interlocked.Add(ref outerSum, localSum);
     
 };
 
-// Start 4 concurrent consuming actions.
-int taskCount=5;
-Parallel.Invoke(() =>
+
+Action[] tasks = new Action[taskCount];
+for (int i = 0; i < taskCount; i++)
 {
-    for (int i = 0; i < taskCount; i++)
-    {
-        // do some work
-        Console.WriteLine("Task " + i + " is running");
-    }
-});
+    tasks[i] = () => my_action();
+}
+
+Parallel.Invoke(tasks);
+
 Console.WriteLine("outerSum = {0}, should be 49995000", outerSum);
 
-/*
-var max = args.Length != 0 ? Convert.ToInt32(args[0]) : -1;
-while (max == -1 || counter < max)
+
+if (!Directory.Exists("quarantine"))
 {
-    Console.WriteLine($"Counter: {++counter}");
-    await Task.Delay(TimeSpan.FromMilliseconds(1_000));
-}*/
+    // If the directory does not exist, create it
+    Directory.CreateDirectory("quarantine");
+}
+Console.WriteLine("moving files");
+foreach(var i in quarantine)
+{
+    File.Move(Directory.GetCurrentDirectory() + "/" + i,Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i));
+}

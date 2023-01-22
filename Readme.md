@@ -10,4 +10,4 @@ Emulation-based scanning: This method involves running a file in a simulated env
 
 # docker build -t counter-image -f Dockerfile .
 # dotnet publish -c Release
-# dotnet run
+# dotnet run -it -v /files:/quarantine
