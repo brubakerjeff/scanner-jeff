@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 const int taskCount=5; // Specify the number of simultaneous threads to for  processing
 
-
 // Create a thread safe queue 
 ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
 ConcurrentQueue<string> quarantine = new ConcurrentQueue<string>();
@@ -27,7 +26,6 @@ Action my_action = () =>
             Console.WriteLine("potential positive " + localValue);
         }
     }
-    
 };
 
 
