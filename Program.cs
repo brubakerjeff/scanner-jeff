@@ -1,11 +1,15 @@
 ﻿using System.Collections.Concurrent;
 const int taskCount=5; // Specify the number of simultaneous threads to for  processing
 
-// Create a thread safe queue 
+// Create a thread safe queue to load in files to be processed
 ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
-ConcurrentQueue<string> quarantine = new ConcurrentQueue<string>();
+// Create a thread safe queue of files we wish to quarantine
+ConcurrentQueue<ResultInfo> quarantine = new ConcurrentQueue<ResultInfo>();
 
-Console.WriteLine("Adding these files for processing");
+List<IFilter> FilterList = new List<IFilter>();
+FilterList.Add(new MD5Filter());
+FilterList.Add(new NameFilter());
+Console.WriteLine("Enumerating files from the 'toscan' directory for processing");
 
 string[] files = Directory.GetFiles("toscan");
 foreach (string file in files)
@@ -14,16 +18,27 @@ foreach (string file in files)
     cq.Enqueue(file);
 }
 
-int outerSum = 0;
 // An action to consume the ConcurrentQueue.
 Action my_action = () =>
 {
     string? localValue;
     
     while (cq.TryDequeue(out localValue)) {
-        if(localValue.Contains("file")) {
-            quarantine.Enqueue(localValue);
+        var ff = new Scanee(localValue); 
+        var metaDescription = "";
+        var isSuspect=false;
+        
+        // Check the files against each of our filters
+        foreach(var f in FilterList)
+        {
+            if(f.IsSuspect(ff)) {
+                metaDescription+="|" + f.meta;
+                isSuspect=true;
+            }   
             Console.WriteLine("potential positive " + localValue);
+        }
+        if(isSuspect==true) {
+            quarantine.Enqueue(new ResultInfo(localValue,metaDescription));
         }
     }
 };
@@ -37,7 +52,6 @@ for (int i = 0; i < taskCount; i++)
 
 Parallel.Invoke(tasks);
 
-Console.WriteLine("outerSum = {0}, should be 49995000", outerSum);
 
 
 if (!Directory.Exists("quarantine"))
@@ -48,5 +62,6 @@ if (!Directory.Exists("quarantine"))
 Console.WriteLine("moving files");
 foreach(var i in quarantine)
 {
-    File.Move(Directory.GetCurrentDirectory() + "/" + i,Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i));
+    Console.WriteLine("Placing " + Path.GetFileName(i.Filename) + " into quarantine " + i.Reason);
+    File.Move(Directory.GetCurrentDirectory() + "/" + i.Filename,Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i.Filename));
 }
