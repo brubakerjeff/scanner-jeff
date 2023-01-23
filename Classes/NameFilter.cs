@@ -12,7 +12,11 @@ public class NameFilter : IFilter
     public bool IsSuspect(Scanee obj) {
         if(names.Contains(Path.GetFileName(obj._filename))) {
             _meta= "suspected by file name match";
+            return true;
         }
-        return true;
+        else {
+            return false;
+        }
+        
     }
 }

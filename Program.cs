@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-const int taskCount=5; // Specify the number of simultaneous threads to for  processing
+const int taskCount = 5; // Specify the number of simultaneous threads to for  processing
 
 // Create a thread safe queue to load in files to be processed
 ConcurrentQueue<string> cq = new ConcurrentQueue<string>();
@@ -9,6 +9,8 @@ ConcurrentQueue<ResultInfo> quarantine = new ConcurrentQueue<ResultInfo>();
 List<IFilter> FilterList = new List<IFilter>();
 FilterList.Add(new MD5Filter());
 FilterList.Add(new NameFilter());
+
+
 Console.WriteLine("Enumerating files from the 'toscan' directory for processing");
 
 string[] files = Directory.GetFiles("toscan");
@@ -22,37 +24,34 @@ foreach (string file in files)
 Action my_action = () =>
 {
     string? localValue;
-    
-    while (cq.TryDequeue(out localValue)) {
-        var ff = new Scanee(localValue); 
+
+    while (cq.TryDequeue(out localValue))
+    {
+        var ff = new Scanee(localValue);
         var metaDescription = "";
-        var isSuspect=false;
-        
+        var isSuspect = false;
+
         // Check the files against each of our filters
-        foreach(var f in FilterList)
+        foreach (var f in FilterList)
         {
-            if(f.IsSuspect(ff)) {
-                metaDescription+="|" + f.meta;
-                isSuspect=true;
-            }   
-            Console.WriteLine("potential positive " + localValue);
+            if (f.IsSuspect(ff))
+            {
+                metaDescription += "|" + f.meta;
+                isSuspect = true;
+            }
+
         }
-        if(isSuspect==true) {
-            quarantine.Enqueue(new ResultInfo(localValue,metaDescription));
+        if (isSuspect == true)
+        {
+            Console.WriteLine("potential positive " + localValue);
+            quarantine.Enqueue(new ResultInfo(localValue, metaDescription));
         }
     }
 };
 
-
-Action[] tasks = new Action[taskCount];
-for (int i = 0; i < taskCount; i++)
-{
-    tasks[i] = () => my_action();
-}
+Action[] tasks = BuildTasks(taskCount, my_action);
 
 Parallel.Invoke(tasks);
-
-
 
 if (!Directory.Exists("quarantine"))
 {
@@ -60,8 +59,19 @@ if (!Directory.Exists("quarantine"))
     Directory.CreateDirectory("quarantine");
 }
 Console.WriteLine("moving files");
-foreach(var i in quarantine)
+foreach (var i in quarantine)
 {
     Console.WriteLine("Placing " + Path.GetFileName(i.Filename) + " into quarantine " + i.Reason);
-    File.Move(Directory.GetCurrentDirectory() + "/" + i.Filename,Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i.Filename));
+    File.Move(Directory.GetCurrentDirectory() + "/" + i.Filename, Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i.Filename));
+}
+
+static Action[] BuildTasks(int taskCount, Action my_action)
+{
+    Action[] tasks = new Action[taskCount];
+    for (int i = 0; i < taskCount; i++)
+    {
+        tasks[i] = () => my_action();
+    }
+
+    return tasks;
 }

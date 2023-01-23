@@ -1,3 +1,8 @@
+# - dotnet publish -c Release
+# - docker build -t scanner-jeff-image -f Dockerfile .
+# - docker create --name scanner-jeff scanner-jeff-image
+# - docker run -it -v ~/toscan:/App/toscan scanner-jeff-image
+
 Please carefully consider the user story when planning your approach. For example, ease of deployment would be very important to our users.  
  
 We will test your solution against a large dataset (at least 100,000 files) of mixed file types, including but not limited to: documents of multiple types (pdf, Word, Excel, LibreOffice, etc.), compressed files, executables, and various plain-text formats.  
@@ -32,6 +37,3 @@ Behavioral-based scanning: This method involves monitoring the behavior of a fil
 Emulation-based scanning: This method involves running a file in a simulated environment, monitoring its behavior and comparing it to a set of predefined rules to determine if it is malicious.
 
 
-- docker build -t counter-image -f Dockerfile .
-- dotnet publish -c Release
-- dotnet run -it -v /files:/quarantine
