@@ -32,6 +32,6 @@ Behavioral-based scanning: This method involves monitoring the behavior of a fil
 Emulation-based scanning: This method involves running a file in a simulated environment, monitoring its behavior and comparing it to a set of predefined rules to determine if it is malicious.
 
 
-# docker build -t counter-image -f Dockerfile .
-# dotnet publish -c Release
-# dotnet run -it -v /files:/quarantine
+- docker build -t counter-image -f Dockerfile .
+- dotnet publish -c Release
+- dotnet run -it -v /files:/quarantine
