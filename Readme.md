@@ -4,7 +4,7 @@
  The proposed solution is to mount a local directory into the docker image, where a script will automatically extract and process any compressed files (e.g. tar.gz or zip).
  Using parellel processing with a set of filters, the script will flag any suspicious files unless they pass a safe filter and place them in the quarantine folder.
 
-The current filters look at name and hash mapping. With the use of object-oriented programming and its extensibility, it is possible to add other filters without breaking the pattern. Algorithms such as more advanced matching algorithms or interfacing with simulated environment such as a cyber range for further analysis.
+The current filters look at name and hash mapping. With the use of object-oriented programming and its extensibility, it is possible to add other filters without breaking the pattern. Ideas for extensions could be algorithms such as more advanced matching (machine learning) or interfacing with a simulated environment for execution in isolation.
 
 ## Assumptions:
 - Client has docker available
