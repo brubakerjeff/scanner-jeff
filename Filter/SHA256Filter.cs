@@ -17,7 +17,6 @@ namespace Filter
             using (var sha256 = SHA256.Create())
             {
                 var m = sha256.ComputeHash(obj.byteArray);
-                Console.WriteLine("Hash is " + Convert.ToHexString(m) + " for " + obj._filename);
                 if(md5signatures.Contains(Convert.ToHexString(m).ToUpper())) {
                     _meta= "suspected by MD5 match";
                     return true;
