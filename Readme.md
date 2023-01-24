@@ -1,21 +1,23 @@
-# Scanner - Jeff
+##  Scanner - Jeff
 
 
-# The idea is to mount a local directory into the docker image.
-# The script inside the docker image starts by extracting any tar.gz or zip files
-# From there it runs through a list of filters and flags any suspects with 4 parallel through
-# Next it identifies any suspects as safe through another set of filters
-# Any items still in the queue it moves to the quarantine folder.
+ The proposed solution is to mount a local directory into the docker image, where a script will automatically extract and process any compressed files (e.g. tar.gz or zip).
+ Using parellel processing with a set of filters, the script will flag any suspicious files unless they pass a safe filter and place them in the quarantine folder.
 
+The current filters look at name and hash mapping. The use of object-oriented programming and its extensibility, it is possible to add other filters without breaking the pattern. Algorithms such as more advanced matching algorithms or interfacing with simulated environment such as a cyber range for further analysis.
 
-# Assumptions:
+## Assumptions:
 - Client has docker available
 - Items of interest are stored in ~/toscan
 
-# - dotnet publish -c Release
-# - docker build -t scanner-jeff-image -f Dockerfile .
-# - docker create --name scanner-jeff scanner-jeff-image
-# - docker run -it -v ~/toscan:/App/toscan scanner-jeff-image
+To run the current environment the following commands are recommended.
+```` 
+   dotnet publish -c Release
+   docker build -t scanner-jeff-image -f Dockerfile .
+   docker create --name scanner-jeff scanner-jeff-image
+   docker run -it -v ~/toscan:/App/toscan scanner-jeff-image
+````
+
 
 Please carefully consider the user story when planning your approach. For example, ease of deployment would be very important to our users.  
  
@@ -39,15 +41,5 @@ Minimize false positives.  
  
 Performance, 100k files in 5 minutes.  
  
-
-
-There are several common searching algorithms used in virus scanners, including:
-
-Signature-based scanning: This method involves comparing the files on a computer to a database of known virus signatures. If a match is found, the file is flagged as potentially malicious.
-Heuristic-based scanning: This method uses algorithms that try to identify patterns or behaviors that are commonly associated with malware.
-Sandboxing: This method involves running a file in a virtual environment and monitoring its behavior to see if it exhibits any characteristics of malware.
-Artificial Intelligence and Machine Learning: This method uses algorithms that can learn from the data and improve its performance over time.
-Behavioral-based scanning: This method involves monitoring the behavior of a file on a computer and comparing it to a database of known malicious behaviors.
-Emulation-based scanning: This method involves running a file in a simulated environment, monitoring its behavior and comparing it to a set of predefined rules to determine if it is malicious.
 
 
