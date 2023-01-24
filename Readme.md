@@ -1,3 +1,17 @@
+# Scanner - Jeff
+
+
+# The idea is to mount a local directory into the docker image.
+# The script inside the docker image starts by extracting any tar.gz or zip files
+# From there it runs through a list of filters and flags any suspects with 4 parallel through
+# Next it identifies any suspects as safe through another set of filters
+# Any items still in the queue it moves to the quarantine folder.
+
+
+# Assumptions:
+- Client has docker available
+- Items of interest are stored in ~/toscan
+
 # - dotnet publish -c Release
 # - docker build -t scanner-jeff-image -f Dockerfile .
 # - docker create --name scanner-jeff scanner-jeff-image
