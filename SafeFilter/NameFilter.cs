@@ -13,7 +13,7 @@ namespace SafeFilter
         }
         public bool IsSafe(Scanee obj) {
             if(names.Contains(Path.GetFileName(obj._filename))) {
-                _meta= "suspected by file name match";
+                _meta= "safe by file name match";
                 return true;
             }
             else {
