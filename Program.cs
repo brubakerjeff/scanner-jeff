@@ -81,7 +81,16 @@ Action my_action = () =>
         }
     }
 };
+static Action[] BuildTasks(int taskCount, Action my_action)
+{
+    Action[] tasks = new Action[taskCount];
+    for (int i = 0; i < taskCount; i++)
+    {
+        tasks[i] = () => my_action();
+    }
 
+    return tasks;
+}
 Action[] tasks = BuildTasks(taskCount, my_action);
 // Invoke our actions
 Parallel.Invoke(tasks);
@@ -100,13 +109,4 @@ foreach (var i in quarantine)
     File.Move(Directory.GetCurrentDirectory() + "/" + i.Filename, Directory.GetCurrentDirectory() + "/quarantine/" + Path.GetFileName(i.Filename),true);
 }
 
-static Action[] BuildTasks(int taskCount, Action my_action)
-{
-    Action[] tasks = new Action[taskCount];
-    for (int i = 0; i < taskCount; i++)
-    {
-        tasks[i] = () => my_action();
-    }
 
-    return tasks;
-}
