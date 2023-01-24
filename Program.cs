@@ -12,7 +12,7 @@ ConcurrentQueue<ResultInfo> quarantine = new ConcurrentQueue<ResultInfo>();
 
 //List our filters identifying suspicious files
 List<IFilter> FilterList = new List<IFilter>();
-FilterList.Add(new MD5Filter());
+FilterList.Add(new SHA256Filter());
 FilterList.Add(new Filter.NameFilter());
 
 //List out filters identifying safe files (overrides the filters above)
