@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace Filter
 {
-    public class MD5Filter : IFilter
+    public class SHA256Filter : IFilter
     {
         private string _meta {get;set;}
         //transportationPackage5.png
